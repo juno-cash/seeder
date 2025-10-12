@@ -22,7 +22,7 @@ static const char* ppszTypeName[] =
     "block",
 };
 
-unsigned char pchMessageStart[4] = { 0x24, 0xE9, 0x27, 0x64 };
+unsigned char pchMessageStart[4] = { 0xb5, 0x0c, 0x07, 0x02 };  // Mainnet magic bytes for Juno
 
 CMessageHeader::CMessageHeader()
 {

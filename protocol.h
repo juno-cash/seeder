@@ -18,7 +18,7 @@
 extern bool fTestNet;
 static inline unsigned short GetDefaultPort(const bool testnet = fTestNet)
 {
-    return testnet ? 18233 : 8233;
+    return testnet ? 18234 : 8234;  // Our fork: mainnet=8234, testnet=18234
 }
 
 //
