@@ -10,12 +10,13 @@ RUN apt update && \
     apt install -y libssl3 --no-install-recommends && \
     apt clean && \
     rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-WORKDIR /home/dnsseed
-COPY --from=builder /srv/dnsseed /home/dnsseed/
+RUN mkdir -p /usr/local/bin /data
+COPY --from=builder /srv/dnsseed /usr/local/bin/dnsseed
 COPY entrypoint.sh /
+WORKDIR /data
 
 # Set the entrypoint to your script
 ENTRYPOINT ["/entrypoint.sh"]
 
 # Default CMD if no arguments are provided (this can be overwritten at runtime)
-CMD ["/home/dnsseed/dnsseed"]
+CMD ["/usr/local/bin/dnsseed"]

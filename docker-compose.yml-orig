@@ -50,7 +50,7 @@ services:
     environment:
       # Required settings
       - SEED_HOSTNAME=dnsseed.junomoneta.io
-      - NODE_HOSTNAME=mainnet.junomoneta.io
+      - NODE_HOSTNAME=jns1.junomoneta.io
       - EMAIL=admin.junomoneta.io
 
       # Performance tuning
@@ -65,8 +65,8 @@ services:
       - TOR_PROXY=tor:9050            # Enable Tor proxy for onion nodes
 
       # Seed configuration (optional - uses defaults if not specified)
-      # DNS A record seed hostnames - resolved to get initial peer IPs
-      - MAINNET_SEEDS=seeds.junomoneta.io,backup-seeds.junomoneta.io
+      # DNS seed hostnames - resolved to get initial peer IPs
+      - MAINNET_SEEDS=dnsseed.junomoneta.io,mseeds.junomoneta.io
 
       # Direct onion addresses - add known .onion nodes for bootstrapping
       # Format: addr.onion:port (use port 8234 for mainnet, 18234 for testnet)
@@ -84,7 +84,7 @@ services:
     networks:
       - seeder-net
     volumes:
-      - ./data-mainnet:/home/dnsseed  # Persist database (separate from testnet)
+      - ./data-mainnet:/data  # Persist database (separate from testnet)
 
   # Testnet DNS Seeder with Tor support
   testnet-seeder:
@@ -95,7 +95,7 @@ services:
     environment:
       # Required settings
       - SEED_HOSTNAME=dnsseed.testnet.junomoneta.io
-      - NODE_HOSTNAME=testnet.junomoneta.io
+      - NODE_HOSTNAME=jns1.junomoneta.io
       - EMAIL=admin.junomoneta.io
 
       # Performance tuning
@@ -110,7 +110,7 @@ services:
       - TOR_PROXY=tor:9050
 
       # Seed configuration (optional - uses defaults if not specified)
-      - TESTNET_SEEDS=seeds.testnet.junomoneta.io
+      - TESTNET_SEEDS=seeds.testnet.junomoneta.io,tseeds.junomoneta.io
 
       # Direct testnet onion addresses
       # - TESTNET_ONION_SEEDS=test123abc456.onion:18234
@@ -123,7 +123,7 @@ services:
     networks:
       - seeder-net
     volumes:
-      - ./data-testnet:/home/dnsseed  # Persist database (separate from mainnet)
+      - ./data-testnet:/data  # Persist database (separate from mainnet)
 
 networks:
   seeder-net:

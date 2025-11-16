@@ -60,17 +60,17 @@ fi
 
 # If the first argument starts with a hyphen (-), consider it an argument for the dnsseed binary
 if [[ "${1:0:1}" == "-" ]]; then
-  exec /home/dnsseed/dnsseed "$@"
+  exec /usr/local/bin/dnsseed "$@"
 fi
 
 # Run the dnsseed binary with default arguments and extra_args, or run another command if provided
-if [ "$1" == "/home/dnsseed/dnsseed" ]; then
-  exec /home/dnsseed/dnsseed -h "$SEED_HOSTNAME" \
+if [ "$1" == "/usr/local/bin/dnsseed" ]; then
+  eval exec /usr/local/bin/dnsseed -h "$SEED_HOSTNAME" \
     -n "$NODE_HOSTNAME" \
     -a "$ADDRESS" \
     -p "$PORT" \
     -m "$EMAIL" \
-    -t "$THREADS" "$extra_args"
+    -t "$THREADS" $extra_args
 else
   # If another command is passed, run that instead
   exec "$@"
