@@ -120,18 +120,31 @@ Once the seeder connects to any onion node, it will automatically discover more 
 peers through the peer exchange protocol. The initial seeds just help bootstrap the
 discovery process.
 
-DOCKER WITH TOR SUPPORT
-------------------------
+DOCKER SETUP (RECOMMENDED)
+--------------------------
 
-The easiest way to run the seeder with Tor support is using docker-compose:
+The easiest way to run both mainnet and testnet seeders is using docker-compose.
+This provides a complete plug-and-play setup with:
+- Unbound DNS server (handles both mainnet and testnet queries on port 53)
+- Mainnet seeder (crawls mainnet nodes)
+- Testnet seeder (crawls testnet nodes)
+- Tor proxy (enables onion node support)
 
-   docker-compose up -d
+Quick start:
 
-This will start both a Tor SOCKS proxy and the seeder with Tor enabled.
+   1. Copy docker-compose.yml-orig to docker-compose.yml
+   2. Edit the environment variables (hostnames, email, seeds)
+   3. Run: docker-compose up -d
+
+The setup includes Unbound as a DNS frontend that automatically routes:
+- Queries for dnsseed.junomoneta.io → mainnet seeder
+- Queries for dnsseed.testnet.junomoneta.io → testnet seeder
+
+This allows both networks to share port 53 on the same server without conflicts.
 
 Configuration via environment variables in docker-compose.yml:
-   - SEED_HOSTNAME: Your DNS seed hostname (e.g., dnsseed.example.com)
-   - NODE_HOSTNAME: Your server hostname (e.g., vps.example.com)
+   - SEED_HOSTNAME: Your DNS seed hostname (e.g., dnsseed.junomoneta.io)
+   - NODE_HOSTNAME: Your server hostname (e.g., mainnet.junomoneta.io)
    - EMAIL: Contact email (use dots instead of @)
    - TOR_PROXY: Tor SOCKS5 proxy address (default: tor:9050)
    - NETWORK: "mainnet" or "testnet"
@@ -140,18 +153,20 @@ Configuration via environment variables in docker-compose.yml:
    - MAINNET_ONION_SEEDS: Comma-separated list of mainnet onion addresses (addr.onion:port)
    - TESTNET_ONION_SEEDS: Comma-separated list of testnet onion addresses (addr.onion:port)
 
-See docker-compose.yml for a comprehensive example with both mainnet and testnet seeders
-running simultaneously.
+The included unbound.conf configures zone forwarding automatically.
 
-Manual Docker setup options:
+DNS Records Required:
+   In your DNS provider (e.g., Cloudflare), add NS records:
 
-Option 1: Install Tor in the same container (modify Dockerfile):
-   RUN apt install -y tor libssl3 --no-install-recommends
-   Set TOR_PROXY=127.0.0.1:9050
+   dnsseed.junomoneta.io.         IN  NS  ns.yourserver.com.
+   dnsseed.testnet.junomoneta.io. IN  NS  ns.yourserver.com.
+   ns.yourserver.com.             IN  A   <your-server-public-ip>
 
-Option 2: Use a separate Tor container:
-   docker run -d --name tor-proxy peterdavehello/tor-socks-proxy
-   docker run --link tor-proxy:tor -e TOR_PROXY=tor:9050 ...
+Testing:
+   From another machine, test the DNS setup:
+
+   dig @<your-server-ip> dnsseed.junomoneta.io
+   dig @<your-server-ip> dnsseed.testnet.junomoneta.io
 
 COMPILING
 ---------

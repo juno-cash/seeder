@@ -106,6 +106,24 @@ For Tor onion nodes, you can directly specify `.onion` addresses:
 
 These onion seeds are added directly to the database on startup to bootstrap onion node discovery.
 
+## Docker Deployment (Recommended)
+
+The easiest way to deploy both mainnet and testnet seeders is using the included Docker Compose setup:
+
+```bash
+cp docker-compose.yml-orig docker-compose.yml
+# Edit environment variables (hostnames, email, seeds)
+docker-compose up -d
+```
+
+This setup includes:
+- **Unbound DNS server**: Handles both mainnet and testnet queries on port 53
+- **Mainnet seeder**: Crawls and serves mainnet nodes
+- **Testnet seeder**: Crawls and serves testnet nodes
+- **Tor proxy**: Enables onion node discovery
+
+The Unbound DNS frontend automatically routes queries based on hostname, eliminating port conflicts. See QUICKSTART.md for detailed deployment instructions.
+
 ## Testing
 
 To test the seeder without DNS server functionality:
@@ -114,6 +132,12 @@ To test the seeder without DNS server functionality:
 ```
 
 This will crawl the network but not start the DNS server.
+
+With the Docker setup, test DNS queries:
+```bash
+dig @<your-server-ip> dnsseed.junomoneta.io
+dig @<your-server-ip> dnsseed.testnet.junomoneta.io
+```
 
 ## Files
 

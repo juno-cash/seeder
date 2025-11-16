@@ -2,7 +2,25 @@
 
 ## Overview
 
-The DNS seeder has been configured to use the Juno domains for network bootstrapping.
+The DNS seeder has been configured to use the Juno domains for network bootstrapping. The Docker Compose setup includes Unbound DNS server to handle both mainnet and testnet queries on a single server.
+
+## Quick Start (Docker - Recommended)
+
+The easiest deployment method uses Docker Compose with Unbound DNS:
+
+```bash
+cp docker-compose.yml-orig docker-compose.yml
+# Edit hostnames and configuration
+docker-compose up -d
+```
+
+**What gets deployed:**
+- Unbound DNS server (port 53) - Routes queries to appropriate seeder
+- Mainnet seeder - Crawls mainnet nodes (dnsseed.junomoneta.io)
+- Testnet seeder - Crawls testnet nodes (dnsseed.testnet.junomoneta.io)
+- Tor proxy - Enables onion node discovery
+
+See QUICKSTART.md for detailed instructions.
 
 ## Seed Domains
 
@@ -64,6 +82,24 @@ The seeder will:
 
 ## How It Works
 
+### With Docker Compose (Unbound + Seeders)
+
+```
+Internet Client
+     ↓
+Port 53 → Unbound DNS
+     ↓
+     ├─→ dnsseed.junomoneta.io query → Mainnet Seeder Container
+     └─→ dnsseed.testnet.junomoneta.io query → Testnet Seeder Container
+```
+
+1. **Query Routing**: Unbound receives DNS queries on port 53
+2. **Zone Forwarding**: Based on hostname, forwards to the correct seeder
+3. **Node Discovery**: Each seeder crawls its network and maintains a database
+4. **Response**: Seeders return IP addresses of healthy nodes
+
+### Traditional Flow (Manual Setup)
+
 1. **Bootstrap Phase**: When the seeder starts, it queries the seed domains to find initial peers
 2. **Crawling Phase**: The seeder connects to discovered peers and asks for more peer addresses
 3. **DNS Service**: The seeder responds to DNS queries with IP addresses of healthy nodes
@@ -71,21 +107,29 @@ The seeder will:
 
 ## DNS Records Required
 
-For the seeder to work as a DNS service, you need to set up:
+In your DNS provider (Cloudflare, Route53, etc.), configure NS records:
 
-### For Mainnet DNS Seed (e.g., `seed.junomoneta.io`)
-
-```
-seed.junomoneta.io.   IN  NS  ns1.yourserver.com.
-ns1.yourserver.com.   IN  A   <your-server-ip>
-```
-
-### For Testnet DNS Seed (e.g., `dnsseed.testnet.junomoneta.io`)
+### For Docker Setup (Both Networks on One Server)
 
 ```
-dnsseed.testnet.junomoneta.io. IN  NS  ns1.yourserver.com.
-ns1.yourserver.com.            IN  A   <your-server-ip>
+dnsseed.junomoneta.io.         IN  NS  ns.yourserver.com.
+dnsseed.testnet.junomoneta.io. IN  NS  ns.yourserver.com.
+ns.yourserver.com.             IN  A   <your-server-ip>
 ```
+
+Both domains point to the same server. Unbound handles routing internally.
+
+### Bootstrap Seeds (A Records)
+
+For the seeders to find initial peers, add A records:
+
+```
+seeds.junomoneta.io.           IN  A   <node-ip-1>
+seeds.junomoneta.io.           IN  A   <node-ip-2>
+seeds.testnet.junomoneta.io.   IN  A   <testnet-node-ip>
+```
+
+The seeders will query these domains and connect to the returned IPs.
 
 ## Running the Seeder
 
