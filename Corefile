@@ -1,20 +1,9 @@
-# CoreDNS configuration - proxy DNS queries to backend seeders
-
-dnsseed.junomoneta.io:53 {
-    errors
-    log
+dnsseed.junomoneta.io {
     forward . 172.20.0.4:53
+    log
 }
 
-dnsseed.testnet.junomoneta.io:53 {
-    errors
-    log
+dnsseed.testnet.junomoneta.io {
     forward . 172.20.0.3:53
-}
-
-# Catch-all for any other queries
-.:53 {
-    errors
     log
-    forward . 8.8.8.8 8.8.4.4
 }

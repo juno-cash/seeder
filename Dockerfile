@@ -30,6 +30,9 @@ RUN install -m 755 dnsseed /usr/local/bin/dnsseed
 # Make entrypoint executable
 RUN chmod +x /src/entrypoint.sh
 
+# Set working directory to /data for persistence
+WORKDIR /data
+
 # Set entrypoint
 ENTRYPOINT ["/src/entrypoint.sh"]
 
