@@ -7,17 +7,17 @@ This seeder has been customized for the Juno network with the following network 
 ### Mainnet
 - **Magic Bytes**: `0xb50c0702`
 - **Default Port**: `8234`
-- **Protocol Version**: `170140` (NU6.1)
+- **Protocol Version**: `170141`
 
 ### Testnet
 - **Magic Bytes**: `0xa723e16c`
 - **Default Port**: `18234`
-- **Protocol Version**: `170140` (NU6.1)
+- **Protocol Version**: `170141`
 
 ### Regtest
 - **Magic Bytes**: `0x811d21f6`
 - **Default Port**: `18345`
-- **Protocol Version**: `170140` (NU6.1)
+- **Protocol Version**: `170141`
 
 ## Changes Made
 
@@ -35,7 +35,8 @@ This seeder has been customized for the Juno network with the following network 
    - Made seed domains configurable via command-line arguments (-s for mainnet, -u for testnet)
 
 5. **serialize.h** (line 63)
-   - Updated protocol version from `170100` to `170140`
+   - Updated protocol version to `170141`
+
 
 ## Running the Seeder
 

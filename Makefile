@@ -4,7 +4,7 @@ LDFLAGS  = $(CXXFLAGS)
 LIBS     = -lcrypto -lresolv
 
 dnsseed: dns.o bitcoin.o netbase.o protocol.o db.o main.o util.o
-	$(CXX) -pthread $(LDFLAGS) -o dnsseed dns.o bitcoin.o netbase.o protocol.o db.o main.o util.o $(LIBS)
+	g++ -pthread $(LDFLAGS) -o dnsseed dns.o bitcoin.o netbase.o protocol.o db.o main.o util.o -lcrypto -lresolv
 
 %.o: %.cpp %.h
 	$(CXX) -std=c++11 -pthread $(CXXFLAGS) \
